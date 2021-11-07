@@ -4,6 +4,13 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import logger from 'morgan';
 
-var app = express();
+dotenv.config();
 
-console.log("Server is running");
+var app = express();
+app.use(cors());
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, ()=>{
+    console.log(`App is listening at port ${PORT}`);
+});
