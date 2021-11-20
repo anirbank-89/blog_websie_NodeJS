@@ -22,8 +22,8 @@ export var create = async (req, res) => {
         category: req.body.category
     }
     if (
-        req.body.image != "" || 
-        req.body.image != null || 
+        req.body.image != "" ||
+        req.body.image != null ||
         typeof req.body.image != "undefined"
     ) {
         saveData.image = req.body.image;
@@ -45,6 +45,47 @@ export var create = async (req, res) => {
             status: false,
             message: "Failed to save data. Server error.",
             error: err
+        });
+    }
+}
+
+export var getAllBlogs = async (req, res) => {
+    var blogs = await blogSchema.find().exec();
+
+    if (blogs.length > 0) {
+        return res.status(200).json({
+            status: true,
+            message: "Data successfully get.",
+            data: blogs
+        });
+    }
+    else {
+        return res.status(200).json({
+            status: true,
+            message: "No blogs posted yet.",
+            data: null
+        });
+    }
+}
+
+export var getBlogById = async (req, res) => {
+    var id = req.params.id;
+
+    try {
+        let blog = await blogSchema.findById(id).exec();
+        console.log(blog);
+
+        return res.status(200).json({
+            status: true,
+            message: "Data get successfully!",
+            data: blog
+        });
+    }
+    catch (err) {
+        return res.status(500).json({
+            status: false,
+            message: "Invalid id.",
+            error: err.message
         });
     }
 }
