@@ -89,3 +89,48 @@ export var getBlogById = async (req, res) => {
         });
     }
 }
+
+export var editBlog = async (req, res) => {
+    var id = req.params.id;
+
+    try {
+        var docs = await blogSchema.findOneAndUpdate(
+            { _id: mongoose.Types.ObjectId(id) },
+            req.body,
+            { new: true }
+        ).exec();
+
+        return res.status(200).json({
+            status: true,
+            message: "Data successfully edited.",
+            data: docs
+        });
+    }
+    catch (err) {
+        return res.status(500).json({
+            status: false,
+            message: "Invalid id. Server error.",
+            error: err.message
+        });
+    }
+}
+
+export var deleteBlog = async (req, res) => {
+    var id = req.params.id;
+
+    return blogSchema.findOneAndDelete({ _id: mongoose.Types.ObjectId(id) })
+        .then(docs => {
+            res.status(200).json({
+                status: true,
+                message: "Data successfully deleted.",
+                data: docs
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: false,
+                message: "Invalid id. Server error.",
+                error: err.message
+            });
+        });
+}
