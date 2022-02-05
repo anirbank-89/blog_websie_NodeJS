@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Validator } from 'node-input-validator';
 import Grid from 'gridfs-stream';
 
-import blogSchema from '../models/blog.js';
+import blogSchema from '../../models/blog.js';
 
 let gfs, gridFsBucket;
 const CONN = mongoose.connection;
