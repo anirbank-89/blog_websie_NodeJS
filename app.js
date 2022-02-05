@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import logger from 'morgan';
+// import path from 'path';
 
 import indexRoute from './routes/index.js';
 dotenv.config();
@@ -26,6 +27,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRoute);
+
+// const moduleURL = new URL(import.meta.url);
+// const __dirname = path.dirname(moduleURL.pathname);
+// console.log(`pathname ${moduleURL.pathname}`);
+// console.log(`dirname ${path.dirname(moduleURL.pathname)}`);
+
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT;
 

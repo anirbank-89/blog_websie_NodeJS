@@ -1,7 +1,19 @@
 import mongoose from 'mongoose';
 import { Validator } from 'node-input-validator';
+import Grid from 'gridfs-stream';
 
 import blogSchema from '../models/blog.js';
+
+let gfs, gridFsBucket;
+const CONN = mongoose.connection;
+CONN.once('open', () => {
+    gridFsBucket = new mongoose.mongo.GridFSBucket(CONN.db, { 
+        bucketName: 'fs' 
+    });
+
+    gfs = Grid(CONN.db, mongoose.mongo);
+    gfs.collection('fs');
+});
 
 export var create = async (req, res) => {
     const V = new Validator(req.body, {
@@ -49,22 +61,123 @@ export var create = async (req, res) => {
     }
 }
 
-export var getAllBlogs = async (req, res) => {
-    var blogs = await blogSchema.find().exec();
+export var addFile = async (req,res) => {
+    // let imageUrl = '';
+    // let image_url = await uploadFile(req, "blog_images");
+    // if (req.file != "" || req.file != null || typeof req.file != "undefined") {
+    //     imageUrl = image_url;
+    // }
 
-    if (blogs.length > 0) {
+    // return res.status(200).json({
+    //     status: true,
+    //     message: "File uploaded successfully.",
+    //     data: imageUrl
+    // });
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({ 
+                status: false,
+                error: "File not found.",
+                data: null
+            });
+        }
+        let imageUrl = `uploads/blog_images/${req.file.filename}`
+    
         return res.status(200).json({
             status: true,
-            message: "Data successfully get.",
-            data: blogs
+            message: "Image link inserted.",
+            image: imageUrl
         });
     }
-    else {
-        return res.status(200).json({
-            status: true,
-            message: "No blogs posted yet.",
-            data: null
+    catch (err) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to insert image",
+            error: err.message
         });
+    }
+}
+
+export var getFile = async (req,res) => {
+    var filename = req.params.filename;
+
+    try {
+        let file = await gfs.files.findOne({ filename: filename });
+        console.log("Blog image", file);
+        var readStream = gridFsBucket.openDownloadStream(file._id);
+
+        readStream.pipe(res);
+    }
+    catch (err) {
+        console.log("Get blog image  error due to ", err);
+
+        return res.status(500).json({
+            status: false,
+            message: "Failed to get data. Server error.",
+            error: err.message
+        });
+    }
+}
+
+export var getAllBlogs = async (req, res) => {
+    var author = req.query.author;
+    var category = req.query.category;
+    let blogs;
+
+    if (author) {
+        blogs = await blogSchema.find({ author: author }).exec();
+
+        if (blogs.length > 0) {
+            return res.status(200).json({
+                status: true,
+                message: "Data successfully get.",
+                data: blogs
+            });
+        }
+        else {
+            return res.status(200).json({
+                status: true,
+                message: "No blogs posted yet.",
+                data: []
+            });
+        }
+    }
+    else if (category) {
+        blogs = await blogSchema.find({ category: category }).exec();
+
+        if (blogs.length > 0) {
+            return res.status(200).json({
+                status: true,
+                message: "Data successfully get.",
+                data: blogs
+            });
+        }
+        else {
+            return res.status(200).json({
+                status: true,
+                message: "No blogs posted yet.",
+                data: []
+            });
+        }
+    }
+    else {
+        blogs = await blogSchema.find({}).exec();
+
+        if (blogs.length > 0) {
+            return res.status(200).json({
+                status: true,
+                message: "Data successfully get.",
+                data: blogs
+            });
+        }
+        else {
+            return res.status(200).json({
+                status: true,
+                message: "No blogs posted yet.",
+                data: []
+            });
+        }
     }
 }
 
