@@ -3,7 +3,7 @@ import express from 'express';
 /**======================Controllers section====================== */
 import { register } from '../controllers/auth/user.js';
 import { addFile, create, deleteBlog, editBlog, getAllBlogs, getBlogById, getFile } from '../controllers/user/Blog.js';
-import { getComments, postComment } from '../controllers/user/Comment.js';
+import { deleteComment, getComments, postComment } from '../controllers/user/Comment.js';
 import upload from '../service/upload.js';
 /**====================Controllers section end==================== */
 
@@ -25,5 +25,6 @@ router.delete('/blog/:id', deleteBlog);
 
 router.post('/comment', postComment);
 router.get('/comment/:blog_id', getComments);
+router.delete('/comment/:id', deleteComment);
 
 export default router;

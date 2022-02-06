@@ -64,3 +64,23 @@ export var getComments = async (req, res) => {
         });
     }
 }
+
+export var deleteComment = async (req, res) => {
+    var id = req.params.id;
+
+    return commentSchema.findOneAndDelete({ _id: mongoose.Types.ObjectId(id) })
+        .then(docs => {
+            res.status(200).json({
+                status: true,
+                message: "Data successfully deleted.",
+                data: docs
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: false,
+                message: "Invalid blog id. Server error.",
+                error: err.message
+            });
+        });
+}
