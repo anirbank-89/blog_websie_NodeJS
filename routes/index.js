@@ -1,7 +1,7 @@
 import express from 'express';
 
 /**======================Controllers section====================== */
-import { register } from '../controllers/auth/user.js';
+import { register } from '../controllers/auth/User.js';
 import { addFile, create, deleteBlog, editBlog, getAllBlogs, getBlogById, getFile } from '../controllers/user/Blog.js';
 import { deleteComment, getComments, postComment } from '../controllers/user/Comment.js';
 import upload from '../service/upload.js';
