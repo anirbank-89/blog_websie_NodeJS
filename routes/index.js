@@ -9,9 +9,9 @@ import upload from '../service/upload.js';
 
 var router = express.Router();
 
-// router.get('/', (req,res)=>{
-//     res.send("Hello world!");
-// });
+router.get('/', (req,res)=>{
+    console.log("Website is live!");
+});
 
 router.post('/register', register);
 
