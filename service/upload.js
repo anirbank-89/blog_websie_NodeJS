@@ -1,6 +1,9 @@
 import fs from 'fs';
 import multer from 'multer';
+import dotenv from 'dotenv';
 import { GridFsStorage } from 'multer-gridfs-storage';
+
+dotenv.config();
 
 export var uploadFile = async (req, folder) => {
     var fileName = "uploads/" + folder + "/" + req.file.originalname;
@@ -9,7 +12,7 @@ export var uploadFile = async (req, folder) => {
 }
 
 const STORAGE = new GridFsStorage({
-    url: 'mongodb+srv://ani_mongouser:mwf3to6@cluster0.nbyew.mongodb.net/test',
+    url: process.env.MONGOURL,
     options: { useUnifiedTopology: true, useNewUrlParser: true },
     file: (req, file) => {
         const match = ["image/png", "image/jpg"]
